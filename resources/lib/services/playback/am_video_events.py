@@ -189,18 +189,19 @@ class AMVideoEvents(ActionManager):
         else:
             is_in_mylist = videoid_data['queue'].get('value', {}).get('inQueue', False)
 
-        bookmark_pos = videoid_data['bookmarkPosition']['value']
+        # Netflix no longer provides all fields in the video data, so read them tolerantly
+        bookmark_pos = videoid_data.get('bookmarkPosition', {}).get('value', -1)
         resume_position = bookmark_pos if bookmark_pos > -1 else None
         event_data = {'resume_position': resume_position,
-                      'runtime': videoid_data['runtime']['value'],
+                      'runtime': videoid_data.get('runtime', {}).get('value'),
                       # Netflix no longer provides requestId (KeyError on playback start)
                       'request_id': videoid_data.get('requestId', {}).get('value'),
-                      'watched': videoid_data['watched']['value'],
+                      'watched': videoid_data.get('watched', {}).get('value', False),
                       'is_in_mylist': is_in_mylist}
         if videoid.mediatype == common.VideoId.EPISODE:
-            event_data['track_id'] = videoid_data['trackIds']['value']['trackId_jawEpisode']
+            event_data['track_id'] = videoid_data.get('trackIds', {}).get('value', {}).get('trackId_jawEpisode')
         else:
-            event_data['track_id'] = videoid_data['trackIds']['value']['trackId_jaw']
+            event_data['track_id'] = videoid_data.get('trackIds', {}).get('value', {}).get('trackId_jaw')
         return event_data
 
     def _get_video_raw_data(self, videoids):
