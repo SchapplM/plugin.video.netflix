@@ -193,7 +193,8 @@ class AMVideoEvents(ActionManager):
         resume_position = bookmark_pos if bookmark_pos > -1 else None
         event_data = {'resume_position': resume_position,
                       'runtime': videoid_data['runtime']['value'],
-                      'request_id': videoid_data['requestId']['value'],
+                      # Netflix no longer provides requestId (KeyError on playback start)
+                      'request_id': videoid_data.get('requestId', {}).get('value'),
                       'watched': videoid_data['watched']['value'],
                       'is_in_mylist': is_in_mylist}
         if videoid.mediatype == common.VideoId.EPISODE:
