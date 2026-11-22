@@ -140,7 +140,9 @@ class SessionAccess(SessionCookie, SessionHTTPRequests):
             if exc.response.status_code == 500:
                 # This endpoint raise HTTP error 500 when the password is wrong
                 raise LoginError(common.get_local_string(12344)) from exc
-            raise
+            # Netflix removed /api/shakti/mre/profilehub (HTTP 404), see issue #1806.
+            # Skip the password verification, the cookies from the auth key are valid.
+            LOG.warn(f"profile_hub endpoint unavailable ({exc}), password verification skipped")
         common.set_credentials({'email': email, 'password': password})
         LOG.info('Login successful')
         ui.show_notification(common.get_local_string(30109))
