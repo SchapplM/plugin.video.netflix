@@ -81,7 +81,9 @@ PROFILES = {
 def enabled_profiles():
     """Return a list of all base and enabled additional profiles"""
     return (PROFILES['base'] +
-            PROFILES['h264'] + PROFILES['h264_prk_qc'] +
+            # H.264 PRK-QC profiles cause failed decryption on Linux (audio-only playback),
+            # see upstream PR #1808
+            PROFILES['h264'] +
             _subtitle_profiles() +
             _additional_profiles('vp9profile0', 'enable_vp9_profiles') +
             _additional_profiles('vp9profile2', ['enable_vp9_profiles', 'enable_vp9.2_profiles']) +
